@@ -1,0 +1,23 @@
+{
+	"name": "jstack-app",
+	"main": "src/server/index.ts",
+	"compatibility_date": "2025-02-14",
+	"compatibility_flags": ["nodejs_compat"],
+	"observability": {
+		"enabled": true
+	},
+	"placement": {
+		"mode": "smart"
+	},
+	"dev": {
+		"port": 8080
+	},
+	"d1_databases": [
+		{
+			"binding": "NEXT_TAG_CACHE_D1",
+			"database_id": "ede48dd3-2ac8-468c-bb80-a6578f307168",
+			"database_name": "learn-cf-worker",
+			"migrations_dir": "./drizzle"
+		}
+	]
+}
