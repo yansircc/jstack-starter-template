@@ -1,14 +1,8 @@
-import {
-	SignInButton,
-	SignUpButton,
-	SignedIn,
-	SignedOut,
-	UserButton,
-} from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Providers } from "./components/providers";
 import "./globals.css";
 import { Header } from "./components/header";
+
 export const metadata: Metadata = {
 	title: "JStack App",
 	description: "Created using JStack",

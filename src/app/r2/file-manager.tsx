@@ -1,10 +1,11 @@
 "use client";
 
-import { client } from "@/lib/client";
+import { createAuthClient } from "@/lib/client";
 import { getBackendUrl } from "@/lib/utils";
+import { useAuth } from "@clerk/nextjs";
 import type { R2Object } from "@cloudflare/workers-types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface FileItem {
 	key: string;
@@ -17,13 +18,24 @@ export const FileManager = () => {
 	const [file, setFile] = useState<File | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
+	const [token, setToken] = useState<string | null>(null);
 	const queryClient = useQueryClient();
+
+	const { getToken } = useAuth();
+
+	useEffect(() => {
+		getToken().then((token) => {
+			setToken(token);
+		});
+	}, [getToken]);
+
+	const authClient = createAuthClient(getToken);
 
 	// Fetch all files
 	const { data: files, isPending: isLoadingFiles } = useQuery({
 		queryKey: ["admin-files"],
 		queryFn: async () => {
-			const res = await client.file.listAll.$get();
+			const res = await authClient.file.listAll.$get();
 			const data = await res.json();
 			// Convert R2Objects to FileItem array
 			return Array.isArray(data?.objects)
@@ -58,6 +70,9 @@ export const FileManager = () => {
 				method: "POST",
 				body: formData,
 				credentials: "include",
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
 			});
 
 			if (!res.ok) {
@@ -82,7 +97,7 @@ export const FileManager = () => {
 	// Delete file mutation
 	const { mutate: deleteFile, isPending: isDeleting } = useMutation({
 		mutationFn: async (key: string) => {
-			const res = await client.file.delete.$post({ key });
+			const res = await authClient.file.delete.$post({ key });
 			return await res.json();
 		},
 		onSuccess: async () => {
@@ -95,7 +110,7 @@ export const FileManager = () => {
 	const { mutate: viewFileDetails, isPending: isLoadingFileDetails } =
 		useMutation({
 			mutationFn: async (id: string) => {
-				const res = await client.file.getById.$get({ id });
+				const res = await authClient.file.getById.$get({ id });
 				return await res.json();
 			},
 			onSuccess: (data) => {

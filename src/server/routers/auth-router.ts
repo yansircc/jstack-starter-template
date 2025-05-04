@@ -10,7 +10,7 @@ export const authRouter = j.router({
 	getServerInfo: publicProcedure.query(async ({ c }) => {
 		return c.superjson({
 			serverTime: new Date().toISOString(),
-			environment: process.env.NODE_ENV || "development",
+			environment: "cloudflare-worker",
 			message: "This is a public endpoint that doesn't require authentication",
 		});
 	}),

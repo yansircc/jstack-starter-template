@@ -1,6 +1,7 @@
 "use client";
 
-import { client } from "@/lib/client";
+import { createAuthClient } from "@/lib/client";
+import { useAuth } from "@clerk/nextjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -16,12 +17,15 @@ export const AuthDemo = () => {
 	const queryClient = useQueryClient();
 	const [message, setMessage] = useState<string>("");
 
+	const { getToken } = useAuth();
+	const authClient = createAuthClient(getToken);
+
 	// Fetch public server info (no auth required)
 	const { data: serverInfo } = useQuery<ServerInfo>({
 		queryKey: ["server-info"],
 		queryFn: async () => {
 			try {
-				const res = await client.auth.getServerInfo.$get();
+				const res = await authClient.auth.getServerInfo.$get();
 				if (!res.ok) {
 					throw new Error("Failed to fetch server info");
 				}
@@ -42,7 +46,7 @@ export const AuthDemo = () => {
 		queryKey: ["auth-user-profile"],
 		queryFn: async () => {
 			try {
-				const res = await client.auth.getUserProfile.$get();
+				const res = await authClient.auth.getUserProfile.$get();
 				if (!res.ok) {
 					throw new Error("Authentication failed");
 				}
@@ -57,7 +61,7 @@ export const AuthDemo = () => {
 	// Test auth mutation
 	const { mutate: testAuth, isPending: isTesting } = useMutation({
 		mutationFn: async () => {
-			const res = await client.auth.testAuth.$post({
+			const res = await authClient.auth.testAuth.$post({
 				message: message || "Authentication test successful",
 			});
 			return await res.json();
@@ -87,7 +91,7 @@ export const AuthDemo = () => {
 	// Logout handler
 	const { mutate: logout, isPending: isLoggingOut } = useMutation({
 		mutationFn: async () => {
-			const res = await client.auth.logout.$post();
+			const res = await authClient.auth.logout.$post();
 			return await res.json();
 		},
 		onSuccess: () => {

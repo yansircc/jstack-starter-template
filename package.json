@@ -1,5 +1,5 @@
 {
-	"name": "jstack-app",
+	"name": "learn-jstack",
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
@@ -8,14 +8,16 @@
 		"db:clean": "bun scripts/clean-database.ts",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
-		"db:push": "drizzle-kit push",
+		"db:push:local": "wrangler d1 migrations apply learn-cf-worker --local",
+		"db:push:remote": "wrangler d1 migrations apply learn-cf-worker --remote",
 		"db:studio": "drizzle-kit studio",
-		"db:local:push": "wrangler d1 migrations apply learn-cf-worker --local",
+		"deploy": "wrangler deploy src/server/index.ts",
 		"dev": "next dev",
 		"dev:wrangler": "wrangler dev --local --persist-to=.wrangler/state",
 		"lint": "next lint",
 		"start": "next start",
-		"env:sync:cf": "bun scripts/sync-dev-vars.ts"
+		"env:sync:local": "bun scripts/sync-dev-vars.ts",
+		"env:sync:remote": "wrangler secret bulk .env"
 	},
 	"dependencies": {
 		"@ai-sdk/openai": "^1.3.21",
@@ -23,8 +25,6 @@
 		"@clerk/nextjs": "^6.18.5",
 		"@cloudflare/d1": "^1.4.1",
 		"@radix-ui/react-select": "^2.2.2",
-		"@radix-ui/react-slot": "^1.2.0",
-		"@radix-ui/react-switch": "^1.2.2",
 		"@tailwindcss/postcss": "^4.0.0",
 		"@tanstack/react-query": "^5.51.23",
 		"ai": "^4.3.13",

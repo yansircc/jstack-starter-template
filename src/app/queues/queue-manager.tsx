@@ -1,6 +1,7 @@
 "use client";
 
-import { client } from "@/lib/client";
+import { createAuthClient } from "@/lib/client";
+import { useAuth } from "@clerk/nextjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -27,6 +28,9 @@ export const QueueManager = () => {
 	>("all");
 	const [autoRefresh, setAutoRefresh] = useState(false);
 	const queryClient = useQueryClient();
+	const { getToken } = useAuth();
+
+	const authClient = createAuthClient(getToken);
 
 	// Fetch all queue items
 	const {
@@ -36,7 +40,7 @@ export const QueueManager = () => {
 	} = useQuery({
 		queryKey: ["queue-items", statusFilter],
 		queryFn: async () => {
-			const res = await client.queue.listQueueItems.$get({
+			const res = await authClient.queue.listQueueItems.$get({
 				status: statusFilter,
 				limit: 50,
 			});
@@ -53,7 +57,7 @@ export const QueueManager = () => {
 				// Parse task data as JSON
 				const parsedData = JSON.parse(taskData);
 
-				const res = await client.queue.createQueueItem.$post({
+				const res = await authClient.queue.createQueueItem.$post({
 					name: newTaskName,
 					priority: taskPriority,
 					data: parsedData,
@@ -87,7 +91,7 @@ export const QueueManager = () => {
 			id: string;
 			status: "pending" | "processing" | "completed" | "failed";
 		}) => {
-			const res = await client.queue.updateQueueItemStatus.$post({
+			const res = await authClient.queue.updateQueueItemStatus.$post({
 				id,
 				status,
 			});
@@ -102,7 +106,7 @@ export const QueueManager = () => {
 	// Retry queue item mutation
 	const { mutate: retryQueueItem, isPending: isRetrying } = useMutation({
 		mutationFn: async (id: string) => {
-			const res = await client.queue.retryQueueItem.$post({ id });
+			const res = await authClient.queue.retryQueueItem.$post({ id });
 			return await res.json();
 		},
 		onSuccess: async () => {
@@ -114,7 +118,7 @@ export const QueueManager = () => {
 	// Delete queue item mutation
 	const { mutate: deleteQueueItem, isPending: isDeleting } = useMutation({
 		mutationFn: async (id: string) => {
-			const res = await client.queue.deleteQueueItem.$post({ id });
+			const res = await authClient.queue.deleteQueueItem.$post({ id });
 			return await res.json();
 		},
 		onSuccess: async () => {

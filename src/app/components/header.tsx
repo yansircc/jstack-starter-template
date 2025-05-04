@@ -9,6 +9,7 @@ import {
 } from "@clerk/nextjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { navItems } from "../config/navigation";
 
 export const Header = () => {
 	return (
@@ -53,37 +54,6 @@ export const Header = () => {
 		</header>
 	);
 };
-
-const navItems = [
-	{
-		label: "首页",
-		href: "/",
-	},
-	{
-		label: "D1",
-		href: "/d1",
-	},
-	{
-		label: "R2",
-		href: "/r2",
-	},
-	{
-		label: "KV",
-		href: "/kv",
-	},
-	{
-		label: "AI",
-		href: "/ai",
-	},
-	{
-		label: "鉴权",
-		href: "/auth",
-	},
-	{
-		label: "队列",
-		href: "/queues",
-	},
-];
 
 const Nav = () => {
 	const pathname = usePathname();

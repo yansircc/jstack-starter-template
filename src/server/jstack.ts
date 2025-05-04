@@ -9,7 +9,6 @@ import type {
 } from "@cloudflare/workers-types";
 import { drizzle } from "drizzle-orm/d1";
 import { env } from "hono/adapter";
-import { getCookie } from "hono/cookie";
 import { HTTPException } from "hono/http-exception";
 import { createRemoteJWKSet, jwtVerify } from "jose";
 import { jstack } from "jstack";
@@ -67,11 +66,12 @@ const publicMiddleware = j.middleware(async ({ c, next }) => {
 });
 
 const authMiddleware = j.middleware(async ({ c, next, ctx }) => {
-	const token = getCookie(c, "__session");
+	const authHeader = c.req.header("Authorization");
+	const token = authHeader?.replace("Bearer ", "");
 
 	if (!token) {
 		throw new HTTPException(401, {
-			message: "Unauthorized, please sign in to continue",
+			message: "未授权，请登录继续",
 		});
 	}
 
@@ -100,7 +100,7 @@ const authMiddleware = j.middleware(async ({ c, next, ctx }) => {
 	} catch (error) {
 		console.error("JWT验证错误:", error);
 		throw new HTTPException(401, {
-			message: "Invalid authentication token",
+			message: "无效的认证令牌",
 		});
 	}
 });

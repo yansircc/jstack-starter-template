@@ -1,6 +1,6 @@
+import { cors } from "hono/cors";
 import { dynamic } from "jstack";
 import { j } from "./jstack";
-
 /**
  * This is your base API.
  * Here, you can handle errors, not-found responses, cors and more.
@@ -10,7 +10,22 @@ import { j } from "./jstack";
 const api = j
 	.router()
 	.basePath("/api")
-	.use(j.defaults.cors)
+	.use(
+		cors({
+			origin: [
+				"http://localhost:3000",
+				"https://learn-cf-worker.yansir.workers.dev",
+			],
+			allowHeaders: [
+				"x-is-superjson",
+				"Authorization",
+				"Content-Type",
+				"content-type",
+			],
+			exposeHeaders: ["x-is-superjson"],
+			credentials: true,
+		}),
+	)
 	.onError(j.defaults.errorHandler);
 
 /**
