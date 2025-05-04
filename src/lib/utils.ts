@@ -9,13 +9,8 @@ export function cn(...inputs: ClassValue[]) {
  * Checks if code is running in a worker environment and returns appropriate backend URL
  */
 export function getBackendUrl(): string {
-	// More reliable worker environment detection
-	const isWorkerEnv =
-		typeof self !== "undefined" &&
-		typeof window === "undefined" &&
-		typeof fetch === "function";
-
-	return isWorkerEnv
-		? "https://learn-jstack.yansir.workers.dev/api"
-		: "http://localhost:8080/api";
+	if (process.env.NODE_ENV === "production") {
+		return "https://learn-jstack.yansir.workers.dev/api";
+	}
+	return "http://localhost:8080/api";
 }
