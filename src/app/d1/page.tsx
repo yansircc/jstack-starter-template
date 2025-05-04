@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
-import { RecentPost } from "./d1/post";
+import { D1Demo } from "./post";
 
-export default async function Home() {
+export default function D1Page() {
 	return (
 		<main className="flex bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 flex-col items-center justify-center relative isolate">
 			<div className="absolute inset-0 -z-10 opacity-50 mix-blend-soft-light bg-[url('/noise.svg')] [mask-image:radial-gradient(ellipse_at_center,black,transparent)]" />
@@ -14,17 +14,16 @@ export default async function Home() {
 						"from-white to-gray-50",
 					)}
 				>
-					<span>JStack</span>
+					<span>D1 Database</span>
 				</h1>
 
 				<p className="text-[#ececf399] text-lg/7 md:text-xl/8 text-pretty sm:text-wrap sm:text-center text-center mb-8">
-					The stack for building seriously fast, lightweight and{" "}
-					<span className="inline sm:block">
-						end-to-end typesafe Next.js apps.
-					</span>
+					Explore Cloudflare D1 CRUD operations.
 				</p>
 
-				<RecentPost />
+				<div className="flex flex-col gap-8 w-full items-center">
+					<D1Demo />
+				</div>
 			</div>
 		</main>
 	);

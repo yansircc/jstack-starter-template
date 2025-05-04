@@ -60,24 +60,28 @@ const navItems = [
 		href: "/",
 	},
 	{
-		label: "队列",
-		href: "/queues",
+		label: "D1",
+		href: "/d1",
 	},
 	{
-		label: "文件",
-		href: "/files",
+		label: "R2",
+		href: "/r2",
 	},
 	{
 		label: "KV",
 		href: "/kv",
 	},
 	{
+		label: "AI",
+		href: "/ai",
+	},
+	{
 		label: "鉴权",
 		href: "/auth",
 	},
 	{
-		label: "AI",
-		href: "/ai",
+		label: "队列",
+		href: "/queues",
 	},
 ];
 
