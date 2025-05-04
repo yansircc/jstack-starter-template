@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import { RecentPost } from "./d1/post";
 
 export default async function Home() {
 	return (
@@ -23,8 +22,6 @@ export default async function Home() {
 						end-to-end typesafe Next.js apps.
 					</span>
 				</p>
-
-				<RecentPost />
 			</div>
 		</main>
 	);

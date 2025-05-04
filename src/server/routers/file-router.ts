@@ -3,7 +3,7 @@ import { z } from "zod";
 import { j, privateProcedure } from "../jstack";
 
 export const fileRouter = j.router({
-	uploadFile: privateProcedure.mutation(async ({ ctx, c }) => {
+	upload: privateProcedure.mutation(async ({ ctx, c }) => {
 		const { r2 } = ctx;
 
 		// 使用Hono的parseBody方法处理文件上传
@@ -25,7 +25,7 @@ export const fileRouter = j.router({
 		return c.superjson(upload);
 	}),
 
-	deleteFile: privateProcedure
+	delete: privateProcedure
 		.input(z.object({ key: z.string() }))
 		.mutation(async ({ ctx, c, input }) => {
 			const { key } = input;
@@ -38,7 +38,7 @@ export const fileRouter = j.router({
 			});
 		}),
 
-	listAllFiles: privateProcedure.query(async ({ ctx, c }) => {
+	listAll: privateProcedure.query(async ({ ctx, c }) => {
 		const { r2 } = ctx;
 
 		const files = await r2.list();
@@ -46,7 +46,7 @@ export const fileRouter = j.router({
 		return c.superjson(files);
 	}),
 
-	getFileById: privateProcedure
+	getById: privateProcedure
 		.input(z.object({ id: z.string() }))
 		.query(async ({ ctx, c, input }) => {
 			const { id } = input;

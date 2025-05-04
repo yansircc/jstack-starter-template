@@ -1,6 +1,7 @@
 "use client";
 
 import { client } from "@/lib/client";
+import { getBackendUrl } from "@/lib/utils";
 import type { R2Object } from "@cloudflare/workers-types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -22,7 +23,7 @@ export const FileManager = () => {
 	const { data: files, isPending: isLoadingFiles } = useQuery({
 		queryKey: ["admin-files"],
 		queryFn: async () => {
-			const res = await client.file.listAllFiles.$get();
+			const res = await client.file.listAll.$get();
 			const data = await res.json();
 			// Convert R2Objects to FileItem array
 			return Array.isArray(data?.objects)
@@ -50,8 +51,10 @@ export const FileManager = () => {
 			const formData = new FormData();
 			formData.append("file", file);
 
+			const baseUrl = getBackendUrl();
+
 			// 使用fetch上传文件
-			const res = await fetch("http://localhost:8080/api/admin/uploadFile", {
+			const res = await fetch(`${baseUrl}/file/upload`, {
 				method: "POST",
 				body: formData,
 				credentials: "include",
@@ -79,7 +82,7 @@ export const FileManager = () => {
 	// Delete file mutation
 	const { mutate: deleteFile, isPending: isDeleting } = useMutation({
 		mutationFn: async (key: string) => {
-			const res = await client.file.deleteFile.$post({ key });
+			const res = await client.file.delete.$post({ key });
 			return await res.json();
 		},
 		onSuccess: async () => {
@@ -92,7 +95,7 @@ export const FileManager = () => {
 	const { mutate: viewFileDetails, isPending: isLoadingFileDetails } =
 		useMutation({
 			mutationFn: async (id: string) => {
-				const res = await client.file.getFileById.$get({ id });
+				const res = await client.file.getById.$get({ id });
 				return await res.json();
 			},
 			onSuccess: (data) => {

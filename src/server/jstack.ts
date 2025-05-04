@@ -1,11 +1,11 @@
-import { createWorkersAI } from "workers-ai-provider";
-
+import { createOpenAI } from "@ai-sdk/openai";
 import type {
 	Ai,
 	D1Database,
 	KVNamespace,
 	Queue,
 	R2Bucket,
+	SecretsStoreSecret,
 } from "@cloudflare/workers-types";
 import { drizzle } from "drizzle-orm/d1";
 import { env } from "hono/adapter";
@@ -24,6 +24,7 @@ export interface Env {
 		AI: Ai;
 		R2_BUCKET: R2Bucket;
 		QUEUE: Queue;
+		SECRET_STORE: SecretsStoreSecret;
 	};
 }
 
@@ -48,17 +49,18 @@ export const j = jstack.init<Env>();
  * Middleware definitions
  */
 const publicMiddleware = j.middleware(async ({ c, next }) => {
-	const { NEXT_TAG_CACHE_D1, LOCAL_KV, AI, R2_BUCKET, QUEUE } = env(c);
+	const { NEXT_TAG_CACHE_D1, LOCAL_KV, AI, R2_BUCKET, QUEUE, OPENAI_API_KEY } =
+		env(c);
 
-	const workersai = createWorkersAI({
-		// @ts-expect-error Types between Cloudflare Workers AI and workers-ai-provider are not fully compatible
-		binding: AI,
+	const openai = createOpenAI({
+		apiKey: OPENAI_API_KEY as string,
 	});
 
 	return await next({
 		db: drizzle(NEXT_TAG_CACHE_D1),
 		kv: LOCAL_KV,
-		ai: workersai,
+		cloudflareai: AI,
+		openai,
 		r2: R2_BUCKET,
 		queue: QUEUE,
 	});

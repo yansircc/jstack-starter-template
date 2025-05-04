@@ -1,10 +1,6 @@
+import { dynamic } from "jstack";
 import { j } from "./jstack";
-import { aiRouter } from "./routers/ai-router";
-import { authRouter } from "./routers/auth-router";
-import { fileRouter } from "./routers/file-router";
-import { kvRouter } from "./routers/kv-router";
-import { postRouter } from "./routers/post-router";
-import { queueRouter } from "./routers/queue-router";
+
 /**
  * This is your base API.
  * Here, you can handle errors, not-found responses, cors and more.
@@ -22,12 +18,12 @@ const api = j
  * All routers in /server/routers should be added here manually.
  */
 const appRouter = j.mergeRouters(api, {
-	post: postRouter,
-	file: fileRouter,
-	kv: kvRouter,
-	ai: aiRouter,
-	queue: queueRouter,
-	auth: authRouter,
+	post: dynamic(() => import("./routers/post-router")),
+	file: dynamic(() => import("./routers/file-router")),
+	kv: dynamic(() => import("./routers/kv-router")),
+	ai: dynamic(() => import("./routers/ai-router")),
+	queue: dynamic(() => import("./routers/queue-router")),
+	auth: dynamic(() => import("./routers/auth-router")),
 });
 
 export type AppRouter = typeof appRouter;
