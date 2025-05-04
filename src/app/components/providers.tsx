@@ -1,5 +1,6 @@
 "use client";
 
+import { ClerkProvider } from "@clerk/nextjs";
 import {
 	QueryCache,
 	QueryClient,
@@ -7,6 +8,7 @@ import {
 } from "@tanstack/react-query";
 import { HTTPException } from "hono/http-exception";
 import { type PropsWithChildren, useState } from "react";
+import { Toaster } from "sonner";
 
 export const Providers = ({ children }: PropsWithChildren) => {
 	const [queryClient] = useState(
@@ -23,6 +25,17 @@ export const Providers = ({ children }: PropsWithChildren) => {
 	);
 
 	return (
-		<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+		<ClerkProvider>
+			<QueryClientProvider client={queryClient}>
+				<Toaster
+					className="z-50"
+					duration={2000}
+					theme="dark"
+					richColors
+					position="top-center"
+				/>
+				{children}
+			</QueryClientProvider>
+		</ClerkProvider>
 	);
 };

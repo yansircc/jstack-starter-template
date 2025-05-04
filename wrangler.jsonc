@@ -19,5 +19,28 @@
 			"database_name": "learn-cf-worker",
 			"migrations_dir": "./drizzle"
 		}
-	]
+	],
+	"kv_namespaces": [
+		{
+			"binding": "LOCAL_KV",
+			"id": "bd33039ef9df4beb8509fbc9297ce631"
+		}
+	],
+	"ai": {
+		"binding": "AI"
+	},
+	"r2_buckets": [
+		{
+			"binding": "R2_BUCKET",
+			"bucket_name": "learn-jstack"
+		}
+	],
+	"queues": {
+		"producers": [
+			{
+				"queue": "local-queues",
+				"binding": "QUEUE"
+			}
+		]
+	}
 }

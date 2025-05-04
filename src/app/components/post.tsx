@@ -2,7 +2,6 @@
 
 import { client } from "@/lib/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { HTTPException } from "hono/http-exception";
 import { useState } from "react";
 
 export const RecentPost = () => {

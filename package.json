@@ -3,6 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
+		"reset": "rm -rf .wrangler && rm -rf .next && rm -rf node_modules && bun i && bun dev",
 		"build": "next build",
 		"db:clean": "bun scripts/clean-database.ts",
 		"db:generate": "drizzle-kit generate",
@@ -16,18 +17,28 @@
 		"start": "next start"
 	},
 	"dependencies": {
+		"@clerk/nextjs": "^6.18.5",
+		"@cloudflare/d1": "^1.4.1",
+		"@radix-ui/react-slot": "^1.2.0",
 		"@tailwindcss/postcss": "^4.0.0",
 		"@tanstack/react-query": "^5.51.23",
+		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"drizzle-orm": "^0.39.0",
 		"hono": "^4.7.0",
+		"jose": "^6.0.10",
 		"jstack": "^1.1.1",
+		"lucide-react": "^0.507.0",
 		"next": "^15.1.6",
+		"next-themes": "^0.4.6",
 		"postgres": "^3.4.5",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
+		"shadcn-ui": "^0.9.5",
+		"sonner": "^2.0.3",
 		"superjson": "^2.2.1",
-		"tailwind-merge": "^2.5.2",
+		"tailwind-merge": "^3.2.0",
+		"tailwindcss-animate": "^1.0.7",
 		"zod": "^3.24.1"
 	},
 	"devDependencies": {
@@ -43,6 +54,7 @@
 		"eslint-plugin-drizzle": "^0.2.3",
 		"postcss": "^8",
 		"tailwindcss": "^4.0.0",
+		"tw-animate-css": "^1.2.9",
 		"typescript": "^5",
 		"wrangler": "^4.14.1"
 	}
