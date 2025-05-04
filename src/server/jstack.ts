@@ -1,3 +1,5 @@
+import { createWorkersAI } from "workers-ai-provider";
+
 import type {
 	Ai,
 	D1Database,
@@ -48,10 +50,15 @@ export const j = jstack.init<Env>();
 const publicMiddleware = j.middleware(async ({ c, next }) => {
 	const { NEXT_TAG_CACHE_D1, LOCAL_KV, AI, R2_BUCKET, QUEUE } = env(c);
 
+	const workersai = createWorkersAI({
+		// @ts-expect-error Types between Cloudflare Workers AI and workers-ai-provider are not fully compatible
+		binding: AI,
+	});
+
 	return await next({
 		db: drizzle(NEXT_TAG_CACHE_D1),
 		kv: LOCAL_KV,
-		ai: AI,
+		ai: workersai,
 		r2: R2_BUCKET,
 		queue: QUEUE,
 	});

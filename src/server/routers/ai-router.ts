@@ -1,3 +1,4 @@
+import { streamText } from "ai";
 import { z } from "zod";
 import { j, publicProcedure } from "../jstack";
 
@@ -5,32 +6,37 @@ export const aiRouter = j.router({
 	generate: publicProcedure
 		.input(
 			z.object({
-				prompt: z.string(),
+				messages: z.array(
+					z.object({
+						role: z.enum(["user", "assistant"]),
+						content: z.string(),
+					}),
+				),
+				// 可选系统提示
 				system: z.string().optional(),
 			}),
 		)
-		.query(async ({ ctx, c, input }) => {
+		.post(async ({ ctx, c, input }) => {
 			const { ai } = ctx;
+			const { messages, system } = input;
 
-			const system =
-				input.system ||
-				"You are a man of few words. You can only respond with 10 words or less.";
+			// 使用Cloudflare AI
+			const model = ai("@cf/meta/llama-3.3-70b-instruct-fp8-fast", {});
 
-			const messages = [
-				{
-					role: "system",
-					content: system,
-				},
-				{
-					role: "user",
-					content: input.prompt,
-				},
-			];
-
-			const value = await ai.run("@cf/meta/llama-3.3-70b-instruct-fp8-fast", {
+			// 创建流式文本响应
+			const result = streamText({
+				model,
 				messages,
+				...(system && { system }), // 如果有系统提示，添加到参数中
 			});
 
-			return c.superjson(value);
+			// 返回文本流响应
+			return result.toTextStreamResponse({
+				headers: {
+					"Content-Type": "text/x-unknown",
+					"content-encoding": "identity",
+					"transfer-encoding": "chunked",
+				},
+			});
 		}),
 });
