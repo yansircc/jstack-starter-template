@@ -52,22 +52,18 @@ export const authRouter = j.router({
 	// Simulated logout function - in a real app, this would clear auth cookies
 	getSecret: privateProcedure.mutation(async ({ c, ctx }) => {
 		// In a real implementation, you would do something like:
-		// setCookie(c, "__session", "", { maxAge: 0, path: "/" });
+		const { user } = ctx;
 
-		const { secretStore } = ctx;
-
-		const foo = await secretStore.get();
-
-		if (!foo) {
+		if (!user) {
 			return c.superjson({
 				success: false,
-				message: "No secret found",
+				message: "No user found",
 			});
 		}
 
 		return c.superjson({
 			success: true,
-			message: `The secret is ${foo}`,
+			message: `The user is ${user.email}`,
 		});
 	}),
 });

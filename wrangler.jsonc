@@ -42,12 +42,5 @@
 				"queue": "local-queues"
 			}
 		]
-	},
-	"secrets_store_secrets": [
-		{
-			"binding": "SECRET_STORE",
-			"store_id": "8aa82590190d4ff89f2c56364ccd47a1",
-			"secret_name": "FOO"
-		}
-	]
+	}
 }

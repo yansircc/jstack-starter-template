@@ -5,7 +5,6 @@ import type {
 	KVNamespace,
 	Queue,
 	R2Bucket,
-	SecretsStoreSecret,
 } from "@cloudflare/workers-types";
 import { drizzle } from "drizzle-orm/d1";
 import { env } from "hono/adapter";
@@ -23,7 +22,6 @@ export interface Env {
 		AI: Ai;
 		R2_BUCKET: R2Bucket;
 		QUEUE: Queue;
-		SECRET_STORE: SecretsStoreSecret;
 	};
 }
 
@@ -48,15 +46,8 @@ export const j = jstack.init<Env>();
  * Middleware definitions
  */
 const publicMiddleware = j.middleware(async ({ c, next }) => {
-	const {
-		D1_DATABASE,
-		KV_NAMESPACE,
-		AI,
-		R2_BUCKET,
-		QUEUE,
-		OPENAI_API_KEY,
-		SECRET_STORE,
-	} = env(c);
+	const { D1_DATABASE, KV_NAMESPACE, AI, R2_BUCKET, QUEUE, OPENAI_API_KEY } =
+		env(c);
 
 	const openai = createOpenAI({
 		apiKey: OPENAI_API_KEY as string,
@@ -69,7 +60,6 @@ const publicMiddleware = j.middleware(async ({ c, next }) => {
 		openai,
 		r2: R2_BUCKET,
 		queue: QUEUE,
-		secretStore: SECRET_STORE,
 	});
 });
 
