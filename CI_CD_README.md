@@ -10,10 +10,11 @@
 
 1. `CLOUDFLARE_API_TOKEN` - Cloudflare API 令牌
 2. `CLOUDFLARE_ACCOUNT_ID` - Cloudflare 账户 ID
-3. `CLERK_JWKS_ENDPOINT` - Clerk JWKS 端点 URL
-4. `CLERK_JWT_ISSUER` - Clerk JWT 颁发者 URL
-5. `CLERK_SECRET_KEY` - Clerk 密钥
-6. `OPENAI_API_KEY` - OpenAI API 密钥
+3. `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` - Clerk 的可共享公钥
+4. `CLERK_JWKS_ENDPOINT` - Clerk JWKS 端点 URL
+5. `CLERK_JWT_ISSUER` - Clerk JWT 颁发者 URL
+6. `CLERK_SECRET_KEY` - Clerk 密钥
+7. `OPENAI_API_KEY` - OpenAI API 密钥
 
 #### 如何获取 Cloudflare API Token:
 
