@@ -50,9 +50,6 @@ next-env.d.ts
 /worker/
 *.backup.*
 
-# drizzle
-/drizzle
-
 # scripts
 /scripts
 
