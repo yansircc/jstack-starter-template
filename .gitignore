@@ -26,11 +26,13 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+bun-debug.log*
 
 # local env files
 .env
 .env*.local
 .dev.vars
+.dev.vars.*
 
 # vercel
 .vercel
@@ -41,9 +43,23 @@ next-env.d.ts
 
 # wrangler
 .wrangler
+.wrangler/
+.workers-sites/
+
+# cloudflare
+/worker/
+*.backup.*
 
 # drizzle
 /drizzle
 
 # scripts
 /scripts
+
+# temporary files
+*.tmp
+*.temp
+
+# JWT keys
+private.key
+public.key
