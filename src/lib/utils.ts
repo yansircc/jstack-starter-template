@@ -10,7 +10,7 @@ export function cn(...inputs: ClassValue[]) {
  */
 export function getBackendUrl(): string {
 	if (process.env.NODE_ENV === "production") {
-		return "https://learn-jstack.yansir.workers.dev/api";
+		return "https://learn-jstack.yansir.workers.dev";
 	}
-	return "http://localhost:8080/api";
+	return "http://localhost:8080";
 }

@@ -14,7 +14,7 @@
 	},
 	"d1_databases": [
 		{
-			"binding": "NEXT_TAG_CACHE_D1",
+			"binding": "D1_DATABASE",
 			"database_id": "ede48dd3-2ac8-468c-bb80-a6578f307168",
 			"database_name": "learn-cf-worker",
 			"migrations_dir": "./drizzle"
@@ -22,7 +22,7 @@
 	],
 	"kv_namespaces": [
 		{
-			"binding": "LOCAL_KV",
+			"binding": "KV_NAMESPACE",
 			"id": "bd33039ef9df4beb8509fbc9297ce631"
 		}
 	],
@@ -47,7 +47,7 @@
 		{
 			"binding": "SECRET_STORE",
 			"store_id": "8aa82590190d4ff89f2c56364ccd47a1",
-			"secret_name": "OPENAI_API_KEY"
+			"secret_name": "FOO"
 		}
 	]
 }

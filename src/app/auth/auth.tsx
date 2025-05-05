@@ -88,18 +88,29 @@ export const AuthDemo = () => {
 		},
 	});
 
-	// Logout handler
-	const { mutate: logout, isPending: isLoggingOut } = useMutation({
+	// get secret handler
+	const { mutate: getSecret, isPending: isGettingSecret } = useMutation({
 		mutationFn: async () => {
-			const res = await authClient.auth.logout.$post();
+			const res = await authClient.auth.getSecret.$post();
 			return await res.json();
 		},
-		onSuccess: () => {
+		onSuccess: (data) => {
 			queryClient.invalidateQueries({ queryKey: ["auth-user-profile"] });
-			setMessage("You have been logged out");
+			toast.success(
+				<div>
+					<p className="text-sm text-zinc-200">Get secret successful</p>
+					<p className="text-xs text-zinc-400">{data.message}</p>
+				</div>,
+			);
 		},
 		onError: (err) => {
-			setError(err instanceof Error ? err.message : "Logout failed");
+			setError(err instanceof Error ? err.message : "Get secret failed");
+			toast.error(
+				<div>
+					<p className="text-sm text-zinc-200">Get secret failed</p>
+					<p className="text-xs text-zinc-400">{err.message}</p>
+				</div>,
+			);
 		},
 	});
 
@@ -212,12 +223,12 @@ export const AuthDemo = () => {
 						{userData?.user && (
 							<button
 								type="button"
-								onClick={() => logout()}
-								disabled={isLoggingOut}
+								onClick={() => getSecret()}
+								disabled={isGettingSecret}
 								className="flex items-center justify-center px-4 py-2 bg-red-900/70 hover:bg-red-800/70 
 										   rounded-md transition text-sm font-medium"
 							>
-								{isLoggingOut ? "Logging out..." : "Logout"}
+								{isGettingSecret ? "Getting secret..." : "Get Secret"}
 							</button>
 						)}
 					</div>

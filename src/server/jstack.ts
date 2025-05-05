@@ -18,8 +18,8 @@ import { jstack } from "jstack";
  */
 export interface Env {
 	Bindings: {
-		NEXT_TAG_CACHE_D1: D1Database;
-		LOCAL_KV: KVNamespace;
+		D1_DATABASE: D1Database;
+		KV_NAMESPACE: KVNamespace;
 		AI: Ai;
 		R2_BUCKET: R2Bucket;
 		QUEUE: Queue;
@@ -48,20 +48,28 @@ export const j = jstack.init<Env>();
  * Middleware definitions
  */
 const publicMiddleware = j.middleware(async ({ c, next }) => {
-	const { NEXT_TAG_CACHE_D1, LOCAL_KV, AI, R2_BUCKET, QUEUE, OPENAI_API_KEY } =
-		env(c);
+	const {
+		D1_DATABASE,
+		KV_NAMESPACE,
+		AI,
+		R2_BUCKET,
+		QUEUE,
+		OPENAI_API_KEY,
+		SECRET_STORE,
+	} = env(c);
 
 	const openai = createOpenAI({
 		apiKey: OPENAI_API_KEY as string,
 	});
 
 	return await next({
-		db: drizzle(NEXT_TAG_CACHE_D1),
-		kv: LOCAL_KV,
+		db: drizzle(D1_DATABASE),
+		kv: KV_NAMESPACE,
 		cloudflareai: AI,
 		openai,
 		r2: R2_BUCKET,
 		queue: QUEUE,
+		secretStore: SECRET_STORE,
 	});
 });
 

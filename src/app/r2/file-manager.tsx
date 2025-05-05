@@ -63,7 +63,7 @@ export const FileManager = () => {
 			const formData = new FormData();
 			formData.append("file", file);
 
-			const baseUrl = getBackendUrl();
+			const baseUrl = `${getBackendUrl()}/api`;
 
 			// 使用fetch上传文件
 			const res = await fetch(`${baseUrl}/file/upload`, {
