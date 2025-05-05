@@ -12,6 +12,7 @@
 		"db:push:remote": "wrangler d1 migrations apply learn-cf-worker --remote",
 		"db:studio": "drizzle-kit studio",
 		"deploy": "wrangler deploy src/server/index.ts",
+		"deploy:test": "bun scripts/test-deploy.sh",
 		"dev": "next dev",
 		"dev:wrangler": "wrangler dev --local --persist-to=.wrangler/state",
 		"lint": "next lint",
