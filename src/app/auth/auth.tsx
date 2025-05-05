@@ -13,7 +13,6 @@ interface ServerInfo {
 }
 
 export const AuthDemo = () => {
-	const [error, setError] = useState<string | null>(null);
 	const queryClient = useQueryClient();
 	const [message, setMessage] = useState<string>("");
 
@@ -45,16 +44,8 @@ export const AuthDemo = () => {
 	const { data: userData, isPending: isLoadingUser } = useQuery({
 		queryKey: ["auth-user-profile"],
 		queryFn: async () => {
-			try {
-				const res = await authClient.auth.getUserProfile.$get();
-				if (!res.ok) {
-					throw new Error("Authentication failed");
-				}
-				return await res.json();
-			} catch (err) {
-				setError(err instanceof Error ? err.message : "Authentication failed");
-				return null;
-			}
+			const res = await authClient.auth.getUserProfile.$get();
+			return await res.json();
 		},
 	});
 
@@ -75,16 +66,10 @@ export const AuthDemo = () => {
 					<p className="text-xs text-zinc-400">{data.message}</p>
 				</div>,
 			);
-			setError(null);
 			if (data?.message) {
 				setMessage(data.message);
 			}
 			queryClient.invalidateQueries({ queryKey: ["auth-user-profile"] });
-		},
-		onError: (err) => {
-			setError(
-				err instanceof Error ? err.message : "Authentication test failed",
-			);
 		},
 	});
 
@@ -100,15 +85,6 @@ export const AuthDemo = () => {
 				<div>
 					<p className="text-sm text-zinc-200">Get secret successful</p>
 					<p className="text-xs text-zinc-400">{data.message}</p>
-				</div>,
-			);
-		},
-		onError: (err) => {
-			setError(err instanceof Error ? err.message : "Get secret failed");
-			toast.error(
-				<div>
-					<p className="text-sm text-zinc-200">Get secret failed</p>
-					<p className="text-xs text-zinc-400">{err.message}</p>
 				</div>,
 			);
 		},
@@ -181,7 +157,6 @@ export const AuthDemo = () => {
 				) : (
 					<div className="bg-red-900/20 border border-red-800/30 p-3 rounded-md">
 						<p className="text-sm text-red-200">Not authenticated</p>
-						{error && <p className="text-xs text-red-300 mt-1">{error}</p>}
 					</div>
 				)}
 			</div>

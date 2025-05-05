@@ -1,6 +1,7 @@
 "use client";
 
-import { client } from "@/lib/client";
+import { createAuthClient } from "@/lib/client";
+import { useAuth } from "@clerk/nextjs";
 import { useMutation } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -17,55 +18,53 @@ export const Search = () => {
 	const [result, setResult] = useState<SearchResult | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 
+	const { getToken } = useAuth();
+	const authClient = createAuthClient(getToken);
+
 	// 使用TanStack Query的mutation进行搜索
 	const { mutate: performSearch } = useMutation({
 		mutationFn: async (searchQuery: string) => {
 			setIsLoading(true);
 
-			try {
-				// 使用类型安全的client发送搜索请求
-				const response = await client.ai.search.$post({
+			const response = await authClient.ai.search.$post({
+				query: searchQuery,
+			});
+
+			if (!response.ok) throw new Error("请求失败");
+
+			// 处理响应
+			const reader = response.body?.getReader();
+			if (!reader) throw new Error("无法读取响应流");
+
+			const decoder = new TextDecoder();
+			let accumulated = "";
+
+			// 处理流式响应
+			while (true) {
+				const { done, value } = await reader.read();
+				if (done) break;
+
+				const text = decoder.decode(value, { stream: true });
+				accumulated += text;
+
+				// 更新结果
+				setResult({
 					query: searchQuery,
+					result: accumulated,
+					timestamp: Date.now(),
 				});
-
-				if (!response.ok) throw new Error("请求失败");
-
-				// 处理响应
-				const reader = response.body?.getReader();
-				if (!reader) throw new Error("无法读取响应流");
-
-				const decoder = new TextDecoder();
-				let accumulated = "";
-
-				// 处理流式响应
-				while (true) {
-					const { done, value } = await reader.read();
-					if (done) break;
-
-					const text = decoder.decode(value, { stream: true });
-					accumulated += text;
-
-					// 更新结果
-					setResult({
-						query: searchQuery,
-						result: accumulated,
-						timestamp: Date.now(),
-					});
-				}
-
-				return accumulated;
-			} catch (error) {
-				console.error("搜索错误:", error);
-				throw error;
-			} finally {
-				setIsLoading(false);
 			}
+
+			return accumulated;
 		},
 		onSuccess: () => {
 			// 搜索完成后聚焦到输入框
 			setTimeout(() => {
 				inputRef.current?.focus();
 			}, 100);
+		},
+		onSettled: () => {
+			setIsLoading(false);
 		},
 	});
 

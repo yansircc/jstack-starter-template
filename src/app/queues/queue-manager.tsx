@@ -21,7 +21,6 @@ export const QueueManager = () => {
 	const [newTaskName, setNewTaskName] = useState("");
 	const [taskPriority, setTaskPriority] = useState(3);
 	const [taskData, setTaskData] = useState("{}");
-	const [error, setError] = useState<string | null>(null);
 	const [selectedItem, setSelectedItem] = useState<QueueItem | null>(null);
 	const [statusFilter, setStatusFilter] = useState<
 		"all" | "pending" | "processing" | "completed" | "failed"
@@ -53,32 +52,22 @@ export const QueueManager = () => {
 	// Create queue item mutation
 	const { mutate: createQueueItem, isPending: isCreating } = useMutation({
 		mutationFn: async () => {
-			try {
-				// Parse task data as JSON
-				const parsedData = JSON.parse(taskData);
+			// Parse task data as JSON
+			const parsedData = JSON.parse(taskData);
 
-				const res = await authClient.queue.createQueueItem.$post({
-					name: newTaskName,
-					priority: taskPriority,
-					data: parsedData,
-				});
+			const res = await authClient.queue.createQueueItem.$post({
+				name: newTaskName,
+				priority: taskPriority,
+				data: parsedData,
+			});
 
-				return await res.json();
-			} catch (err) {
-				if (err instanceof Error) {
-					setError(`Failed to create task: ${err.message}`);
-				} else {
-					setError("Failed to create task: Unknown error");
-				}
-				throw err;
-			}
+			return await res.json();
 		},
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({ queryKey: ["queue-items"] });
 			setNewTaskName("");
 			setTaskPriority(3);
 			setTaskData("{}");
-			setError(null);
 		},
 	});
 
@@ -203,8 +192,6 @@ export const QueueManager = () => {
 							placeholder="{}"
 						/>
 					</div>
-
-					{error && <p className="text-red-400 text-sm">{error}</p>}
 
 					<button
 						type="button"

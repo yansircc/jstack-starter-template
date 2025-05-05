@@ -1,7 +1,7 @@
 import { streamText } from "ai";
 import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
-import { j, publicProcedure } from "../jstack";
+import { j, privateProcedure, publicProcedure } from "../jstack";
 
 export const aiRouter = j.router({
 	generate: publicProcedure
@@ -45,7 +45,7 @@ export const aiRouter = j.router({
 			}
 		}),
 
-	search: publicProcedure
+	search: privateProcedure
 		.input(
 			z.object({
 				query: z.string(),

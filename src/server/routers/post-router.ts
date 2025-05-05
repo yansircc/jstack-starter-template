@@ -1,10 +1,10 @@
 import { posts } from "@/server/db/schema";
-import { and, desc, eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
-import { j, publicProcedure } from "../jstack";
+import { j, privateProcedure } from "../jstack";
 
 export const postRouter = j.router({
-	getAll: publicProcedure.query(async ({ c, ctx }) => {
+	getAll: privateProcedure.query(async ({ c, ctx }) => {
 		const { db } = ctx;
 
 		const allPosts = await db
@@ -15,7 +15,7 @@ export const postRouter = j.router({
 		return c.superjson(allPosts);
 	}),
 
-	recent: publicProcedure.query(async ({ c, ctx }) => {
+	recent: privateProcedure.query(async ({ c, ctx }) => {
 		const { db } = ctx;
 
 		const [recentPost] = await db
@@ -28,7 +28,7 @@ export const postRouter = j.router({
 		return c.superjson(recentPost ?? null);
 	}),
 
-	getById: publicProcedure
+	getById: privateProcedure
 		.input(z.object({ id: z.number() }))
 		.query(async ({ c, ctx, input }) => {
 			const { db } = ctx;
@@ -39,7 +39,7 @@ export const postRouter = j.router({
 			return c.superjson(post ?? null);
 		}),
 
-	create: publicProcedure
+	create: privateProcedure
 		.input(z.object({ name: z.string().min(1) }))
 		.mutation(async ({ ctx, c, input }) => {
 			const { name } = input;
@@ -50,7 +50,7 @@ export const postRouter = j.router({
 			return c.superjson(post);
 		}),
 
-	update: publicProcedure
+	update: privateProcedure
 		.input(z.object({ id: z.number(), name: z.string().min(1) }))
 		.mutation(async ({ ctx, c, input }) => {
 			const { id, name } = input;
@@ -66,7 +66,7 @@ export const postRouter = j.router({
 			return c.superjson(updated);
 		}),
 
-	delete: publicProcedure
+	delete: privateProcedure
 		.input(z.object({ id: z.number() }))
 		.mutation(async ({ ctx, c, input }) => {
 			const { id } = input;

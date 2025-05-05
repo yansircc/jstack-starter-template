@@ -2,22 +2,35 @@
 
 import { ClerkProvider } from "@clerk/nextjs";
 import {
+	MutationCache,
 	QueryCache,
 	QueryClient,
 	QueryClientProvider,
 } from "@tanstack/react-query";
 import { HTTPException } from "hono/http-exception";
 import { type PropsWithChildren, useState } from "react";
-import { Toaster } from "sonner";
+import { Toaster, toast } from "sonner";
 
 export const Providers = ({ children }: PropsWithChildren) => {
 	const [queryClient] = useState(
 		() =>
 			new QueryClient({
+				defaultOptions: {
+					queries: {
+						retry: false,
+					},
+				},
 				queryCache: new QueryCache({
 					onError: (err) => {
 						if (err instanceof HTTPException) {
-							// global error handling, e.g. toast notification ...
+							toast.error(err.message);
+						}
+					},
+				}),
+				mutationCache: new MutationCache({
+					onError: (err) => {
+						if (err instanceof HTTPException) {
+							toast.error(err.message);
 						}
 					},
 				}),

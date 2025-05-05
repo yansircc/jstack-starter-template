@@ -12,7 +12,7 @@ export const fileRouter = j.router({
 
 		if (!file || !(file instanceof File)) {
 			throw new HTTPException(400, {
-				message: "No file provided or invalid file",
+				message: "未提供文件或文件无效",
 			});
 		}
 

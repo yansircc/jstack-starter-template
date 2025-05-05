@@ -14,7 +14,7 @@ const api = j
 		cors({
 			origin: [
 				"http://localhost:3000",
-				"https://learn-cf-worker.yansir.workers.dev",
+				"https://jstack-starter-template.vercel.app",
 			],
 			allowHeaders: [
 				"x-is-superjson",

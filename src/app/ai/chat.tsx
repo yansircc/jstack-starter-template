@@ -3,6 +3,7 @@
 import { client } from "@/lib/client";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 type MessageRole = "user" | "assistant";
 
@@ -42,57 +43,58 @@ export const Chat = () => {
 
 			setIsLoading(true);
 
-			try {
-				// 准备发送的消息数组
-				const messagesToSend = [...messages, newUserMessage].map((msg) => ({
-					role: msg.role,
-					content: msg.content,
-				}));
+			// 准备发送的消息数组
+			const messagesToSend = [...messages, newUserMessage].map((msg) => ({
+				role: msg.role,
+				content: msg.content,
+			}));
 
-				// 使用类型安全的client获取响应
-				const response = await client.ai.generate.$post({
-					messages: messagesToSend,
-					system: SYSTEM_PROMPT, // 添加系统提示
-				});
+			// 使用类型安全的client获取响应
+			const response = await client.ai.generate.$post({
+				messages: messagesToSend,
+				system: SYSTEM_PROMPT, // 添加系统提示
+			});
 
-				if (!response.ok) throw new Error("请求失败");
-
-				// 使用ReadableStream API处理流式响应
-				const reader = response.body?.getReader();
-				if (!reader) throw new Error("无法读取响应流");
-
-				const decoder = new TextDecoder();
-				let accumulated = "";
-
-				// 处理流式响应
-				while (true) {
-					const { done, value } = await reader.read();
-					if (done) break;
-
-					const text = decoder.decode(value, { stream: true });
-					accumulated += text;
-
-					// 更新AI消息内容
-					setMessages((prev) =>
-						prev.map((msg) =>
-							msg.id === aiMessageId ? { ...msg, content: accumulated } : msg,
-						),
-					);
-				}
-
-				return accumulated;
-			} catch (error) {
-				console.error("聊天错误:", error);
-				throw error;
-			} finally {
-				setIsLoading(false);
+			if (!response.ok) {
+				toast.error("请求失败");
 			}
+
+			// 使用ReadableStream API处理流式响应
+			const reader = response.body?.getReader();
+			if (!reader) {
+				toast.error("无法读取响应流");
+				return;
+			}
+
+			const decoder = new TextDecoder();
+			let accumulated = "";
+
+			// 处理流式响应
+			while (true) {
+				const { done, value } = await reader.read();
+				if (done) break;
+
+				const text = decoder.decode(value, { stream: true });
+				accumulated += text;
+
+				// 更新AI消息内容
+				setMessages((prev) =>
+					prev.map((msg) =>
+						msg.id === aiMessageId ? { ...msg, content: accumulated } : msg,
+					),
+				);
+			}
+
+			return accumulated;
 		},
 		onSuccess: () => {
 			// AI回复完成后聚焦到输入框
 			setTimeout(() => {
 				inputRef.current?.focus();
 			}, 100);
+		},
+		onSettled: () => {
+			setIsLoading(false);
 		},
 	});
 

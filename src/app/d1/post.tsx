@@ -1,6 +1,7 @@
 "use client";
 
-import { client } from "@/lib/client";
+import { createAuthClient } from "@/lib/client";
+import { useAuth } from "@clerk/nextjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -15,13 +16,16 @@ export const D1Demo = () => {
 	const [name, setName] = useState<string>("");
 	const [editingPost, setEditingPost] = useState<Post | null>(null);
 	const [editName, setEditName] = useState<string>("");
+
 	const queryClient = useQueryClient();
+	const { getToken } = useAuth();
+	const authClient = createAuthClient(getToken);
 
 	// Get all posts
 	const { data: posts, isPending: isLoadingPosts } = useQuery({
 		queryKey: ["get-all-posts"],
 		queryFn: async () => {
-			const res = await client.post.getAll.$get();
+			const res = await authClient.post.getAll.$get();
 			return await res.json();
 		},
 	});
@@ -29,7 +33,7 @@ export const D1Demo = () => {
 	// Create post
 	const { mutate: createPost, isPending: isCreating } = useMutation({
 		mutationFn: async ({ name }: { name: string }) => {
-			const res = await client.post.create.$post({ name });
+			const res = await authClient.post.create.$post({ name });
 			return await res.json();
 		},
 		onSuccess: async () => {
@@ -41,7 +45,7 @@ export const D1Demo = () => {
 	// Update post
 	const { mutate: updatePost, isPending: isUpdating } = useMutation({
 		mutationFn: async ({ id, name }: { id: number; name: string }) => {
-			const res = await client.post.update.$post({ id, name });
+			const res = await authClient.post.update.$post({ id, name });
 			return await res.json();
 		},
 		onSuccess: async () => {
@@ -54,7 +58,7 @@ export const D1Demo = () => {
 	// Delete post
 	const { mutate: deletePost, isPending: isDeleting } = useMutation({
 		mutationFn: async ({ id }: { id: number }) => {
-			const res = await client.post.delete.$post({ id });
+			const res = await authClient.post.delete.$post({ id });
 			return await res.json();
 		},
 		onSuccess: async () => {

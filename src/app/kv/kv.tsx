@@ -3,46 +3,14 @@
 import { client } from "@/lib/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-
-type KVType = "text" | "json" | "arrayBuffer" | "stream";
-
-// 定义API返回类型
-interface KVGetResponse {
-	key: string;
-	value: unknown;
-	type: string;
-	success?: boolean;
-}
-
-interface KVSetResponse {
-	key: string;
-	success: boolean;
-	expiresIn?: string;
-	error?: string;
-}
-
-interface KVDeleteResponse {
-	key: string;
-	success: boolean;
-	error?: string;
-}
-
-interface KVSetWithExpirationResponse {
-	key: string;
-	value?: string;
-	expiresIn?: string;
-	success: boolean;
-	error?: string;
-}
-
-interface KVListResponse {
-	keys?: string[];
-	complete?: boolean;
-	count?: number;
-	keysWithValues?: Array<{ key: string; value: unknown }>;
-	success: boolean;
-	error?: string;
-}
+import type {
+	KVDeleteResponse,
+	KVGetResponse,
+	KVListResponse,
+	KVSetResponse,
+	KVSetWithExpirationResponse,
+	KVType,
+} from "./types";
 
 export const KV = () => {
 	const [key, setKey] = useState<string>("hello");
@@ -115,12 +83,6 @@ export const KV = () => {
 				setSuccessMessage("");
 			}
 		},
-		onError: (error) => {
-			setErrorMessage(
-				`设置失败: ${error instanceof Error ? error.message : "未知错误"}`,
-			);
-			setSuccessMessage("");
-		},
 	});
 
 	// 删除KV值
@@ -142,12 +104,6 @@ export const KV = () => {
 				setErrorMessage(`删除失败: ${data.error}`);
 				setSuccessMessage("");
 			}
-		},
-		onError: (error) => {
-			setErrorMessage(
-				`删除失败: ${error instanceof Error ? error.message : "未知错误"}`,
-			);
-			setSuccessMessage("");
 		},
 	});
 
@@ -178,12 +134,6 @@ export const KV = () => {
 					setErrorMessage(`设置失败: ${data.error}`);
 					setSuccessMessage("");
 				}
-			},
-			onError: (error) => {
-				setErrorMessage(
-					`设置失败: ${error instanceof Error ? error.message : "未知错误"}`,
-				);
-				setSuccessMessage("");
 			},
 		});
 

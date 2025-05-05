@@ -5,7 +5,8 @@ import { getBackendUrl } from "@/lib/utils";
 import { useAuth } from "@clerk/nextjs";
 import type { R2Object } from "@cloudflare/workers-types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { HTTPException } from "hono/http-exception";
+import { useState } from "react";
 
 interface FileItem {
 	key: string;
@@ -16,19 +17,10 @@ interface FileItem {
 
 export const FileManager = () => {
 	const [file, setFile] = useState<File | null>(null);
-	const [error, setError] = useState<string | null>(null);
 	const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
-	const [token, setToken] = useState<string | null>(null);
 	const queryClient = useQueryClient();
 
 	const { getToken } = useAuth();
-
-	useEffect(() => {
-		getToken().then((token) => {
-			setToken(token);
-		});
-	}, [getToken]);
-
 	const authClient = createAuthClient(getToken);
 
 	// Fetch all files
@@ -54,7 +46,7 @@ export const FileManager = () => {
 
 	// Upload file mutation
 	const { mutate: uploadFile, isPending: isUploading } = useMutation({
-		mutationFn: async () => {
+		mutationFn: async (token: string | null) => {
 			if (!file) {
 				throw new Error("No file selected");
 			}
@@ -65,32 +57,32 @@ export const FileManager = () => {
 
 			const baseUrl = `${getBackendUrl()}/api`;
 
+			const headers = new Headers();
+
+			if (token) {
+				headers.set("Authorization", `Bearer ${token}`);
+			}
+
 			// 使用fetch上传文件
 			const res = await fetch(`${baseUrl}/file/upload`, {
 				method: "POST",
 				body: formData,
 				credentials: "include",
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
+				headers,
 			});
 
 			if (!res.ok) {
-				const error = (await res.json().catch(() => ({ message: "" }))) as {
-					message?: string;
-				};
-				throw new Error(error.message || "Failed to upload file");
+				throw new HTTPException(400, {
+					message: "上传失败",
+				});
 			}
 
 			return await res.json();
 		},
+
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({ queryKey: ["admin-files"] });
 			setFile(null);
-			setError(null);
-		},
-		onError: (err) => {
-			setError(err instanceof Error ? err.message : "Failed to upload file");
 		},
 	});
 
@@ -122,11 +114,9 @@ export const FileManager = () => {
 	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const selectedFile = e.target.files?.[0];
 		if (!selectedFile) {
-			setError("No file selected");
 			return;
 		}
 		setFile(selectedFile);
-		setError(null);
 	};
 
 	return (
@@ -143,8 +133,6 @@ export const FileManager = () => {
 						</p>
 					</div>
 				)}
-
-				{error && <p className="text-red-400 text-sm">{error}</p>}
 
 				<div className="flex flex-col gap-4">
 					<label className="flex flex-col gap-2">
@@ -164,7 +152,11 @@ export const FileManager = () => {
 
 					<button
 						type="button"
-						onClick={() => uploadFile()}
+						onClick={() => {
+							getToken().then((token) => {
+								uploadFile(token);
+							});
+						}}
 						disabled={isUploading || !file}
 						className={`rounded-md text-base/6 ring-2 ring-offset-2 ring-offset-black focus-visible:outline-none focus-visible:ring-zinc-100 
 							h-12 px-10 py-3 text-zinc-800 font-medium transition
