@@ -1,6 +1,7 @@
 import { cors } from "hono/cors";
 import { dynamic } from "jstack";
 import { j } from "./jstack";
+
 /**
  * This is your base API.
  * Here, you can handle errors, not-found responses, cors and more.
@@ -12,10 +13,7 @@ const api = j
 	.basePath("/api")
 	.use(
 		cors({
-			origin: [
-				"http://localhost:3000",
-				"https://jstack-starter-template.vercel.app",
-			],
+			origin: ["http://localhost:3000", process.env.FRONTEND_URL || ""],
 			allowHeaders: [
 				"x-is-superjson",
 				"Authorization",

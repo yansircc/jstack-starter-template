@@ -1,4 +1,4 @@
-name: Deploy to Cloudflare Workers
+name: Deploy to Cloudflare Workers #gh secret set -f .env
 
 on:
   push:
@@ -35,7 +35,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: d1 migrations apply learn-cf-worker
+          command: d1 migrations apply D1_DATABASE
 
       - name: Deploy to Cloudflare Workers
         id: deploy
@@ -48,7 +48,6 @@ jobs:
             CLERK_JWKS_ENDPOINT
             CLERK_JWT_ISSUER
             CLERK_SECRET_KEY
-            OPENAI_API_KEY
           postCommands: |
             echo "Deployment completed successfully!"
         env:
@@ -56,7 +55,6 @@ jobs:
           CLERK_JWKS_ENDPOINT: ${{ secrets.CLERK_JWKS_ENDPOINT }}
           CLERK_JWT_ISSUER: ${{ secrets.CLERK_JWT_ISSUER }}
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       
       - name: Print Deployment URL
         run: echo "Deployed to ${{ steps.deploy.outputs.deployment-url }}" 
