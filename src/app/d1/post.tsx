@@ -1,16 +1,10 @@
 "use client";
 
 import { createAuthClient } from "@/lib/client";
+import type { Post } from "@/server/db/schema";
 import { useAuth } from "@clerk/nextjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-
-interface Post {
-	id: number;
-	name: string;
-	createdAt: Date;
-	updatedAt: Date | null;
-}
 
 export const D1Demo = () => {
 	const [name, setName] = useState<string>("");

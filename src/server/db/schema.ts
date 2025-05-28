@@ -23,3 +23,6 @@ export const posts = sqliteTable(
 	},
 	(table) => [index("Post_name_idx").on(table.name)],
 );
+
+export type Post = typeof posts.$inferSelect;
+export type NewPost = typeof posts.$inferInsert;
