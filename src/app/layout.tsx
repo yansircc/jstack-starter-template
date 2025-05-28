@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { Providers } from "./components/providers";
+import { Providers } from "./_components/providers";
 import "./globals.css";
-import { Header } from "./components/header";
+import { Header } from "./_components/header";
 
 export const metadata: Metadata = {
 	title: "JStack App",

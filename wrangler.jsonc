@@ -42,5 +42,12 @@
 				"queue": "local-queues"
 			}
 		]
-	}
+	},
+	"workflows": [
+		{
+			"name": "math-workflow",
+			"binding": "MATH_WORKFLOW",
+			"class_name": "MathWorkflow"
+		}
+	]
 }

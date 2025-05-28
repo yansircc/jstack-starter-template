@@ -34,4 +34,9 @@ export const navItems = [
 		href: "/queues",
 		description: "Cloudflare Queues 消息队列",
 	},
+	{
+		label: "工作流",
+		href: "/workflow",
+		description: "Cloudflare Workers 工作流",
+	},
 ];

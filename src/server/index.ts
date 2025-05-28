@@ -1,6 +1,7 @@
 import { cors } from "hono/cors";
 import { dynamic } from "jstack";
 import { j } from "./jstack";
+export { MathWorkflow } from "./workflows/math-workflow";
 
 /**
  * This is your base API.
@@ -37,6 +38,7 @@ const appRouter = j.mergeRouters(api, {
 	ai: dynamic(() => import("./routers/ai-router")),
 	queue: dynamic(() => import("./routers/queue-router")),
 	auth: dynamic(() => import("./routers/auth-router")),
+	workflow: dynamic(() => import("./routers/workflow-router")),
 });
 
 export type AppRouter = typeof appRouter;
